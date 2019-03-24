@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package signaref;
+
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+
+message VendorDetails{
+    int32 code=1;
+    string name=2;
+    string email=3;
+    string contactno =4;
+    string passcode=5;
+    Location location=6;
+    Address address=7;
+    string status=8; //tobeapproved /approved /active /inactive /blocked
+    google.protobuf.Timestamp last_updated = 9;
+}
+
+message Location{
+    string type=1;
+    string latitude =2;
+    string longitude =3;
+}
+
+message Address{
+    string line1=1;
+    string line2=2;
+    string line3=3;
+    string street=4;
+    string city=5;
+    string state=6;
+    string country=7;
+    string postalcode=8;
+}
+
+message GeneralResponse{
+    int32 code=1;
+    string error=2;
+    string message=3;
+}
+
+service Vendor{
+    rpc RegisterVendor (VendorDetails) returns(GeneralResponse){
+                option (google.api.http) = {
+                  post: "/v1/vendor/register"
+                  body: "*"
+               };
+             }
+}
+
