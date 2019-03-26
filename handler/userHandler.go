@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"signaref/interfaces"
 	"signaref/models"
 	pb "signaref/proto"
@@ -22,7 +23,7 @@ func init() {
 	flag.Lookup("logtostderr").Value.Set("true")
 }
 
-// RegisterVendor is to register a vendor and store it in the database
+// RegisterUser is to register a user and store it in the database
 func (u *User) RegisterUser(ctx context.Context, in *pb.UserDetails) (*pb.GeneralResponse, error) {
 	user := models.User{}
 	user.Email = in.Email
@@ -41,6 +42,30 @@ func (u *User) RegisterUser(ctx context.Context, in *pb.UserDetails) (*pb.Genera
 		glog.Info(err)
 		return nil, err
 	}
+	out.Code = 201
+	out.Message = "Success"
+	return out, nil
+}
+
+// LoginUser is to register a vendor and store it in the database
+func (u *User) LoginUser(ctx context.Context, in *pb.LoginDetails) (*pb.GeneralResponse, error) {
+	userDetails := models.UserLogin{}
+	userDetails.Email = in.Email
+	userDetails.Mobile = in.Mobile
+	userDetails.Passcode = in.Passcode
+	userDetails.UserType = in.UserType
+
+	out := &pb.GeneralResponse{}
+	if err := models.ValidateUserLogin(userDetails); err != nil {
+		glog.Error(err)
+		return nil, err
+	}
+
+	if !u.IUser.LoginUser(userDetails) {
+		glog.Info("Your account or password is incorrect")
+		return nil, errors.New("Your account or password is incorrect")
+	}
+
 	out.Code = 201
 	out.Message = "Success"
 	return out, nil

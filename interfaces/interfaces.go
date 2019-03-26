@@ -17,4 +17,5 @@ type VendorInterface interface {
 // UserInterface interfaces
 type UserInterface interface {
 	RegisterUser(user models.User) error
+	LoginUser(userLogin models.UserLogin) bool
 }

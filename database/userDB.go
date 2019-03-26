@@ -23,8 +23,22 @@ const (
 )
 
 //IsUserExists is to check vendor exists or not
-func (r *UserDB) IsUserExists(mobile string) bool {
-	count, err := r.Session.(*mgo.Session).DB(r.DBName).C("user").Find(bson.M{"mobile": mobile}).Count()
+func (u *UserDB) IsUserExists(mobile string) bool {
+	count, err := u.Session.(*mgo.Session).DB(u.DBName).C("user").Find(bson.M{"mobile": mobile}).Count()
+	if err != nil {
+		if err.Error() == "not found" {
+			return false
+		}
+	}
+	if count > 0 {
+		return true
+	}
+	return false
+}
+
+//IsUserExistsForLogin is to check vendor exists or not
+func (u *UserDB) IsUserExistsForLogin(userLogin models.UserLogin) bool {
+	count, err := u.Session.(*mgo.Session).DB(u.DBName).C("user").Find(bson.M{"mobile": userLogin.Mobile, "email": userLogin.Email, "passcode": userLogin.Passcode, "user_type": userLogin.UserType}).Count()
 	if err != nil {
 		if err.Error() == "not found" {
 			return false
@@ -37,29 +51,29 @@ func (r *UserDB) IsUserExists(mobile string) bool {
 }
 
 //GetUser is to fetch user based on email and mobile as inputs
-func (r *UserDB) GetUser(email, mobile string) (*models.User, error) {
+func (u *UserDB) GetUser(email, mobile string) (*models.User, error) {
 	user := &models.User{}
-	if err := r.Session.(*mgo.Session).DB(r.DBName).C("user").Find(bson.M{"mobile": mobile, "email": email}).One(user); err != nil {
+	if err := u.Session.(*mgo.Session).DB(u.DBName).C("user").Find(bson.M{"mobile": mobile, "email": email}).One(user); err != nil {
 		return nil, err
 	}
 	return user, nil
 }
 
 // RegisterUser is to register a farmer to the system
-func (r *UserDB) RegisterUser(user models.User) error {
-	if !r.IsUserExists(user.Mobile) {
-		if err := r.Session.(*mgo.Session).DB(r.DBName).C("user").Insert(user); err != nil {
+func (u *UserDB) RegisterUser(user models.User) error {
+	if !u.IsUserExists(user.Mobile) {
+		if err := u.Session.(*mgo.Session).DB(u.DBName).C("user").Insert(user); err != nil {
 			return err
 		}
-		usr, err := r.GetUser(user.Email, user.Mobile)
+		usr, err := u.GetUser(user.Email, user.Mobile)
 		if err != nil {
 			//Todo the earlier transaction revoke
 			return err
 		}
-		if usr.UserType == "vendor" {
+		if user.UserType == "vendor" {
 			vendor := models.Vendor{}
 			vendor.UserID = usr.ID
-			if err := r.Session.(*mgo.Session).DB(r.DBName).C("vendor").Insert(vendor); err != nil {
+			if err := u.Session.(*mgo.Session).DB(u.DBName).C("vendor").Insert(vendor); err != nil {
 				return err
 			}
 		}
@@ -76,4 +90,9 @@ func (r *UserDB) RegisterUser(user models.User) error {
 		return errors.New(ErrUserExists)
 	}
 	return nil
+}
+
+//LoginUser is used to logs a user into the system
+func (u *UserDB) LoginUser(userLogin models.UserLogin) bool {
+	return u.IsUserExistsForLogin(userLogin)
 }

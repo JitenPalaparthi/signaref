@@ -18,8 +18,34 @@ type User struct {
 	LastUpdated time.Time     `json:"last_updated" bson:"last_updated"`
 }
 
+type UserLogin struct {
+	Email    string `json:"email" bson:"email"`
+	Mobile   string `json:"mobile" bson:"mobile"`
+	Passcode string `json:"passcode" bson:"passcode"`
+	UserType string `json:"user_type" bson:"user_type"`
+}
+
 // ValidateUser validates the User type
 func ValidateUser(u User) error {
+	if u.Mobile == "" {
+		return fmt.Errorf("Mobile " + ErrMandatoryField)
+	}
+	if u.Email == "" {
+		return fmt.Errorf("Email " + ErrMandatoryField)
+	}
+
+	if u.Passcode == "" {
+		return fmt.Errorf("Passcode " + ErrMandatoryField)
+	}
+
+	if u.UserType == "" {
+		return fmt.Errorf("UserType " + ErrMandatoryField)
+	}
+	return nil
+}
+
+// ValidateUser validates the User type
+func ValidateUserLogin(u UserLogin) error {
 	if u.Mobile == "" {
 		return fmt.Errorf("Mobile " + ErrMandatoryField)
 	}

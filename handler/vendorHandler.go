@@ -25,10 +25,7 @@ func init() {
 // RegisterVendor is to register a vendor and store it in the database
 func (s *Vendor) RegisterVendor(ctx context.Context, in *pb.VendorDetails) (*pb.GeneralResponse, error) {
 	v := models.Vendor{}
-	v.Code = in.Code
 	v.Name = in.Name
-	v.Email = in.Email
-	v.ContactNo = in.Contactno
 	v.Status = "active"
 	v.LastUpdated = time.Now().UTC()
 	out := &pb.GeneralResponse{}

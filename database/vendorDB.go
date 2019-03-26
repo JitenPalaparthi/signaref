@@ -40,7 +40,7 @@ func (r *VendorDB) IsVendorExists(contactno string) bool {
 
 // RegisterVendor is to register a farmer to the system
 func (r *VendorDB) RegisterVendor(vendor models.Vendor) error {
-	if !r.IsVendorExists(vendor.ContactNo) {
+	if !r.IsVendorExists(vendor.Name) {
 
 		if err := r.Session.(*mgo.Session).DB(r.DBName).C("vendor").Insert(vendor); err != nil {
 			return err
