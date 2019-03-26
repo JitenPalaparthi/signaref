@@ -36,96 +36,44 @@ func (r *UserDB) IsUserExists(mobile string) bool {
 	return false
 }
 
+//GetUser is to fetch user based on email and mobile as inputs
+func (r *UserDB) GetUser(email, mobile string) (*models.User, error) {
+	user := &models.User{}
+	if err := r.Session.(*mgo.Session).DB(r.DBName).C("user").Find(bson.M{"mobile": mobile, "email": email}).One(user); err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
 // RegisterUser is to register a farmer to the system
 func (r *UserDB) RegisterUser(user models.User) error {
 	if !r.IsUserExists(user.Mobile) {
-
 		if err := r.Session.(*mgo.Session).DB(r.DBName).C("user").Insert(user); err != nil {
 			return err
+		}
+		usr, err := r.GetUser(user.Email, user.Mobile)
+		if err != nil {
+			//Todo the earlier transaction revoke
+			return err
+		}
+		if usr.UserType == "vendor" {
+			vendor := models.Vendor{}
+			vendor.UserID = usr.ID
+			if err := r.Session.(*mgo.Session).DB(r.DBName).C("vendor").Insert(vendor); err != nil {
+				return err
+			}
+		}
+		if usr.UserType == "agent" {
+			//Todo Agent Logic here
+		}
+		if usr.UserType == "client" {
+			// Todo Client Logic here
+		}
+		if usr.UserType == "user" {
+			//Todo user(site user ) Logic here
 		}
 	} else {
 		return errors.New(ErrUserExists)
 	}
 	return nil
 }
-
-/*
-// UpdateRawFood is to update raw food
-func (r *RawFoodDB) UpdateRawFood(selector, data interface{}) error {
-	if _, ok := selector.(map[string]interface{}); !ok {
-		return errors.New(ErrWrongInputType)
-	}
-	if _, ok := data.(map[string]interface{}); !ok {
-		return errors.New(ErrWrongInputType)
-	}
-
-	if err := r.Session.(*mgo.Session).DB(r.DBName).C("rawfood").Update(bson.M(selector.(map[string]interface{})), bson.M(data.(map[string]interface{}))); err != nil {
-		return err
-	}
-	return nil
-}
-
-
-//GetRawFood is to fetch rawfood
-func (r *RawFoodDB) GetRawFood(selector interface{}) (*models.RawFood, error) {
-	if _, ok := selector.(map[string]interface{}); !ok {
-		return nil, errors.New(ErrWrongInputType)
-	}
-	//var result map[string]interface{}
-	var result *models.RawFood
-
-	err := r.Session.(*mgo.Session).DB(r.DBName).C("rawfood").Find(bson.M(selector.(map[string]interface{}))).One(&result)
-	if err != nil {
-		return result, err
-	}
-	fmt.Println(result)
-	return result, nil
-}
-
-//GetRawFoods is to fetch rawfood
-func (r *RawFoodDB) GetRawFoods(skip, limit int32, selector interface{}) ([]models.RawFood, error) {
-	if _, ok := selector.(map[string]interface{}); !ok {
-		return nil, errors.New(ErrWrongInputType)
-	}
-	var result []models.RawFood
-	err := r.Session.(*mgo.Session).DB(r.DBName).C("rawfood").Find(bson.M(selector.(map[string]interface{}))).Skip(int(skip)).Limit(int(limit)).Sort("-_id").All(&result)
-
-	if err != nil {
-		return result, err
-	}
-	return result, nil
-}
-
-// DeleteRawFood is to delete raw food
-func (r *RawFoodDB) DeleteRawFood(selector interface{}) error {
-	if _, ok := selector.(map[string]interface{}); !ok {
-		return errors.New(ErrWrongInputType)
-	}
-	if err := r.Session.(*mgo.Session).DB(r.DBName).C("rawfood").Remove(selector); err != nil {
-		return err
-	}
-	return nil
-}
-
-// AddNutrition add nutrition to the existing food
-func (r *RawFoodDB) AddNutrition(selector interface{}, nutrition models.Nutrition) error {
-	//query := bson.M{"code": q.(string)}
-	update, err := ToMap(nutrition, "json")
-	if err != nil {
-		return err
-	}
-	update1 := bson.M{"$push": bson.M{"nutritions": update}}
-	if err := r.Session.(*mgo.Session).DB(r.DBName).C("rawfood").Update(selector, update1); err != nil {
-		return err
-	}
-	return nil
-}
-
-// DeleteNutrition delete nutrition to the existing food
-func (r *RawFoodDB) DeleteNutrition(rootSelector, childSelector interface{}) error {
-	update := bson.M{"$pull": bson.M{"nutritions": childSelector}}
-	if err := r.Session.(*mgo.Session).DB(r.DBName).C("rawfood").Update(rootSelector, update); err != nil {
-		return err
-	}
-	return nil
-}*/

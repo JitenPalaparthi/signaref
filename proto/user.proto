@@ -4,7 +4,7 @@ package signaref;
 
 import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
-import "vendor.proto";
+import "common.proto";
 
 message UserDetails{
     string email=1;
