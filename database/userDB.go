@@ -59,7 +59,7 @@ func (u *UserDB) GetUser(email, mobile string) (*models.User, error) {
 	return user, nil
 }
 
-// RegisterUser is to register a farmer to the system
+// RegisterUser is to register a user to the system
 func (u *UserDB) RegisterUser(user models.User) error {
 	if !u.IsUserExists(user.Mobile) {
 		if err := u.Session.(*mgo.Session).DB(u.DBName).C("user").Insert(user); err != nil {

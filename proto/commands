@@ -8,6 +8,7 @@ Make sure to set PATH to these directories
 
 Then do the below in order to use these binaries 
 
+// Even though using mog in order to install the below stuff .. GOPATH and GOBIN must be set
 go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
 go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
 go get -u github.com/golang/protobuf/protoc-gen-go

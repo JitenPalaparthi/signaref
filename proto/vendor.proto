@@ -12,33 +12,25 @@ message VendorDetails{
     string name=2;
     string userId=3;
     string website=4;
-    Location location=6;
-    Address address=7;
-    string status=8; //tobeapproved /approved /active /inactive /blocked
-    google.protobuf.Timestamp last_updated = 9;
+    Person contactPerson=5;
+    BusinessDetails businessDetails=6;
+    Location location=7;
+    Address address=8;
+    string status=9; //tobeapproved /approved /active /inactive /blocked
+    google.protobuf.Timestamp last_updated = 10;
 }
 
-message Location{
-    string type=1;
-    string latitude =2;
-    string longitude =3;
-}
 
-message Address{
-    string line1=1;
-    string line2=2;
-    string line3=3;
-    string street=4;
-    string city=5;
-    string state=6;
-    string country=7;
-    string postalcode=8;
-    string pobox=9;
-}
 service Vendor{
     rpc RegisterVendor (VendorDetails) returns(GeneralResponse){
                 option (google.api.http) = {
                   post: "/v1/vendor/register"
+                  body: "*"
+               };
+             }
+   rpc FillVendorDetails (VendorDetails) returns(GeneralResponse){
+                option (google.api.http) = {
+                  post: "/v1/vendor/fill"
                   body: "*"
                };
              }

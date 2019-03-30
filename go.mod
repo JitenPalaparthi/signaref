@@ -6,6 +6,7 @@ require (
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/golang/protobuf v1.3.1
 	github.com/grpc-ecosystem/grpc-gateway v1.7.0
+	github.com/night-codes/mgo-ai v0.0.0-20170312044718-437243fe1a70
 	github.com/spf13/viper v1.3.1
 	golang.org/x/net v0.0.0-20190213061140-3a22650c66bd
 	google.golang.org/genproto v0.0.0-20190219182410-082222b4a5c5

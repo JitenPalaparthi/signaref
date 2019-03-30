@@ -22,6 +22,13 @@ message LoginDetails{
   string user_type=4;
 }
 
+message UserChangePassword{
+  string email=1;
+  string mobile =2;
+  string currentPasscode=3;
+  string newPasscode=4;
+}
+
 service User{
     rpc RegisterUser (UserDetails) returns(GeneralResponse){
                 option (google.api.http) = {
@@ -35,5 +42,29 @@ service User{
         body: "*"
      };
     }
+   /* rpc ForgotPassword(LoginDetails)returns(GeneralResponse){
+      option (google.api.http) = {
+        post: "/v1/user/forgotpassword"
+        body: "*"
+     };
+    }
+    rpc ChangePassword(UserChangePassword)returns(GeneralResponse){
+      option (google.api.http) = {
+        post: "/v1/user/change/password"
+        body: "*"
+     };
+    }
+    rpc ChangeEmail(LoginDetails)returns(GeneralResponse){
+      option (google.api.http) = {
+        post: "/v1/user/change/email"
+        body: "*"
+     };
+    }
+    rpc ChangeMobile(LoginDetails)returns(GeneralResponse){
+      option (google.api.http) = {
+        post: "/v1/user/change/mobile"
+        body: "*"
+     };
+    }*/
 }
 

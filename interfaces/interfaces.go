@@ -12,6 +12,7 @@ type Connection interface {
 // VendorInterface interfaces
 type VendorInterface interface {
 	RegisterVendor(vendor models.Vendor) error
+	FillVendorDetails(userid string, vendor *models.Vendor) error
 }
 
 // UserInterface interfaces

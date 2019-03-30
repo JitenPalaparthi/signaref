@@ -2,6 +2,36 @@ syntax = "proto3";
 
 package signaref;
 
+message BusinessDetails{
+    string type=1;
+    string licenceType=2;
+    string licenceCode=3;
+}
+
+message Person{
+    string name=1;
+    string email=2;
+    string contactNo=3;
+}
+
+message Location{
+    string type=1;
+    string latitude =2;
+    string longitude =3;
+}
+
+message Address{
+    string line1=1;
+    string line2=2;
+    string line3=3;
+    string street=4;
+    string city=5;
+    string state=6;
+    string country=7;
+    string postalcode=8;
+    string pobox=9;
+}
+
 message GeneralResponse{
     int32 code=1;
     string error=2;

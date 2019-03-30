@@ -23,8 +23,8 @@ const (
 )
 
 //IsVendorExists is to check vendor exists or not
-func (r *VendorDB) IsVendorExists(contactno string) bool {
-	count, err := r.Session.(*mgo.Session).DB(r.DBName).C("vendor").Find(bson.M{"contactno": contactno}).Count()
+func (r *VendorDB) IsVendorExists(userid string) bool {
+	count, err := r.Session.(*mgo.Session).DB(r.DBName).C("vendor").Find(bson.M{"_userid": userid}).Count()
 	if err != nil {
 		if err.Error() == "not found" {
 			return false
@@ -48,6 +48,20 @@ func (r *VendorDB) RegisterVendor(vendor models.Vendor) error {
 	} else {
 		return errors.New(ErrVendorExists)
 	}
+	return nil
+}
+
+// FillVendorDetails is to fill vendor details in the system
+func (r *VendorDB) FillVendorDetails(userid string, vendor *models.Vendor) error {
+	if !r.IsVendorExists(vendor.Name) {
+		if err := r.Session.(*mgo.Session).DB(r.DBName).C("vendor").Update(bson.M{"_userid": bson.ObjectIdHex(userid)}, &vendor); err != nil {
+			return err
+		}
+	} else {
+		return errors.New(ErrVendorExists)
+	}
+	return nil
+
 	return nil
 }
 
