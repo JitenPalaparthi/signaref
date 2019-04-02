@@ -33,6 +33,11 @@ func run() error {
 		return err
 	}
 
+	err = gw.RegisterProductHandlerFromEndpoint(ctx, mux, *echoEndpoint, opts)
+	if err != nil {
+		return err
+	}
+
 	return http.ListenAndServe(":50052", mux)
 }
 
